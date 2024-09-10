@@ -156,7 +156,6 @@ function App() {
     </div>
   )
 }
-
 function BuildingRect(props) {
   let rect = props.rect;
   return <div className='buildingRect' id={"rect-" + props.name} style={{
