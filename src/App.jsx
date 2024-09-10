@@ -49,7 +49,7 @@ function App() {
     },
     "Fabric Factory": {
       in: {coal: 1, yarn: 1, dyes: 1},
-      out: {wool: 1},
+      out: {fabric: 1},
       rect: {x: 50, w: 23, y: 28, h: 17}
     },
     "Garment": {
@@ -168,7 +168,7 @@ function App() {
           {inResources}
         </div>
         <div className='pay-result'>
-          {payTotal}
+          Total cost: {payTotal}
         </div>
         <div className='out-res'>
           {outResources}
