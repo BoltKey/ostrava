@@ -63,8 +63,8 @@ function App() {
       rect: {x: 74, w: 23, y: 79, h: 17}
     },
     "Furnace": {
-      in: {coke: 1},
-      out: {iore: 1},
+      in: {coke: 1, iore: 1},
+      out: {iron: 1},
       rect: {x: 74, w: 23, y: 52, h: 17}
     },
     "Steel works": {
@@ -101,13 +101,13 @@ function App() {
         if (!result[i]) {
           result[i] = 0
         }
-        result[i] -= 1 * amts[name]
+        result[i] -= data.in[i] * amts[name]
       }
       for (let o in data.out) {
         if (!result[o]) {
           result[o] = 0
         }
-        result[o] += 1 * amts[name]
+        result[o] += data.out[o] * amts[name]
       }
     }
     for (let r in result) {
