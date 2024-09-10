@@ -83,6 +83,13 @@ function App() {
     startAmts[k] = 0;
   }
   let [amts, setAmts] = useState(startAmts)
+  const [resValues, setResValues] = useState({})
+  const handleInputChange = (e, r) => {
+    setResValues({
+      ...resValues,
+      [r]: e.target.value,
+    });
+  };
   const changeBuildingAmt = useCallback((name, amt) => {
     setAmts(amts => {
       let newAmts = Object.assign({}, amts)
@@ -132,11 +139,22 @@ function App() {
   }
   let inResources = [];
   let outResources = []
+  let payTotal = 0
   for (let r in resourceAmts) {
     let amt = resourceAmts[r]
+    let resValue = resValues[r] ?? 10
+    if (amt < 0) {
+      payTotal -= amt * resValue
+    }
     let targetResources = amt < 0 ? inResources : outResources
     targetResources.push(<div className='resource-amt'>
-      {r}: {amt}
+      {r}: {amt} {amt < 0 ? <>× <input
+      type="number"
+      value={resValue}
+      min={1}
+      max={99}
+      onChange={(e) => handleInputChange(e, r)}
+    /></> : null}
     </div>)
   }
   return (
@@ -148,6 +166,9 @@ function App() {
       <div className='io-wrap'>
         <div className='in-res'>
           {inResources}
+        </div>
+        <div className='pay-result'>
+          {payTotal}
         </div>
         <div className='out-res'>
           {outResources}
