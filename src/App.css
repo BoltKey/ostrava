@@ -41,3 +41,7 @@ input {
   font-size: 150%;
   color: darkred;
 }
+
+.resvalue-number {
+  margin: 0 5px;
+}

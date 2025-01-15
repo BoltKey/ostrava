@@ -189,13 +189,17 @@ function App() {
     }
     let targetResources = amt < 0 ? inResources : outResources
     targetResources.push(<div className='resource-amt'>
-      {r}: {amt} {amt < 0 ? <>× <input
-      type="number"
-      value={resValue}
-      min={1}
-      max={99}
-      onChange={(e) => handleInputChange(e, r)}
-    /></> : null}
+      {r}: {amt} {amt < 0 ? <>× <button onClick = {
+        (evt) => {
+          setNewResValue(r, resValues[r] - 1)
+        }
+      }>{"<"}</button><span className='resvalue-number'>{resValue}</span>
+    <button onClick = {
+        (evt) => {
+          setNewResValue(r, resValues[r] + 1)
+        }
+      }>{">"}</button>
+    </> : null}
     </div>)
   }
   return (
