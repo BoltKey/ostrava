@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import board from './assets/board.jpg'
 import viteLogo from '/vite.svg'
@@ -83,12 +83,53 @@ function App() {
     startAmts[k] = 0;
   }
   let [amts, setAmts] = useState(startAmts)
+  const setNewResValue = useCallback((resName, newCost) => {
+    const boundResources = [
+      ["soap", "bch", "dyes", "antiseptic"],
+      ["soda", "acid"],
+      ["coke", "tar"],
+      ["fabric", "cloth"],
+      ["steel", "track"]
+    ]
+    setResValues(oldValue => {
+      let newValue = {...oldValue}
+      newValue[resName] = newCost
+      return newValue
+    })
+    for (let row of boundResources) {
+      if (row.includes(resName)) {
+        for (let boundRes of row) {
+          setResValues(oldValue => {
+            let newValue = {...oldValue}
+            newValue[boundRes] = newCost
+            return newValue
+          })
+        }
+      }
+    }
+  })
   const [resValues, setResValues] = useState({})
+  useEffect(() => {
+    const defaultValues=  {
+      soap: 4,
+      soda: 3,
+      coke: 3,
+      coal: 3,
+      fabric: 6,
+      yarn: 4,
+      wool: 3,
+      steel: 7,
+      iron: 5,
+      iore: 3,
+    }
+    for (let resName in defaultValues) {
+      setNewResValue(resName, defaultValues[resName])
+    }
+
+  }, [])
   const handleInputChange = (e, r) => {
-    setResValues({
-      ...resValues,
-      [r]: e.target.value,
-    });
+    setNewResValue(r, e.target.value)
+
   };
   const changeBuildingAmt = useCallback((name, amt) => {
     setAmts(amts => {
