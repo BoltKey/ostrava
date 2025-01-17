@@ -4,6 +4,9 @@ import board from './assets/board.jpg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+const allResources = [
+  "soap", "bch", "dyes", "antiseptic", "soda", "acid", "coke", "tar", "fabric", "cloth", "steel", "track", "coal", "wool", "yarn", "iore"
+]
 function App() {
   const [count, setCount] = useState(0)
   const buildingData = {
@@ -109,6 +112,7 @@ function App() {
     }
   })
   const [resValues, setResValues] = useState({})
+  const [additionalBuy, setAdditionalBuy] = useState({})
   useEffect(() => {
     const defaultValues=  {
       soap: 4,
@@ -165,6 +169,19 @@ function App() {
     }
     return result
   }, [amts])
+  const totalConsumption = useMemo(() => {
+    let result = {}
+    for (let name in amts) {
+      let data = buildingData[name];
+      for (let o in data.in) {
+        if (!result[o]) {
+          result[o] = 0
+        }
+        result[o] += data.in[o] * amts[name]
+      }
+    }
+    return result
+  }, [amts])
 
   let buildingRects = []
   for (let d in buildingData) {
@@ -181,15 +198,42 @@ function App() {
   let inResources = [];
   let outResources = []
   let payTotal = 0
-  for (let r in resourceAmts) {
-    let amt = resourceAmts[r]
+  for (let r of allResources) {
+    let amt = resourceAmts[r] ?? 0
     let resValue = resValues[r] ?? 10
     if (amt < 0) {
       payTotal -= amt * resValue
     }
-    let targetResources = amt < 0 ? inResources : outResources
-    targetResources.push(<div className='resource-amt'>
-      {r}: {amt} {amt < 0 ? <>× <button onClick = {
+    if (additionalBuy[r]) {
+      payTotal += additionalBuy[r] * resValue
+    }
+    let thisAdditional = additionalBuy[r] ?? 0
+    let outputAmt = (Math.max(amt, 0)) + thisAdditional
+    if (outputAmt > 0) {
+      outResources.push(<tr className='resource-amt'>
+        <td>{r}: <span className='resvalue-number'>{outputAmt}</span></td></tr>)
+    }
+    if (amt !== 0) {
+    inResources.push(<tr className='resource-amt'>
+      <td>{r}: ({amt}</td>
+      <td>
+        {thisAdditional > 0 ?
+        <button onClick={() => setAdditionalBuy((oldValue) => {
+          let newValue = {...oldValue}
+          newValue[r] = (newValue[r] ?? 0) - 1
+          return newValue
+        })}>-</button> : null}
+        - {thisAdditional ?? 0}
+        {thisAdditional < totalConsumption[r] ?
+        <button onClick={() => setAdditionalBuy((oldValue) => {
+          let newValue = {...oldValue}
+          newValue[r] = (newValue[r] ?? 0) + 1
+          return newValue
+        })}>+</button> : null}
+        )
+
+      </td>
+      <td>× <button onClick = {
         (evt) => {
           setNewResValue(r, resValues[r] - 1)
         }
@@ -199,8 +243,9 @@ function App() {
           setNewResValue(r, resValues[r] + 1)
         }
       }>{">"}</button>
-    </> : null}
-    </div>)
+    </td></tr>)
+
+    }
   }
   return (
     <div className='wrap'>
@@ -209,9 +254,9 @@ function App() {
         {buildingRects}
       </div>
       <div className='io-wrap'>
-        <div className='in-res'>
+        <table className='in-res'>
           {inResources}
-        </div>
+        </table>
         <div className='pay-result'>
           Total cost: {payTotal}
         </div>
