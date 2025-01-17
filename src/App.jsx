@@ -44,12 +44,12 @@ function App() {
     },
     "Wool mill": {
       in: {coal: 1, wool: 1, acid: 1},
-      out: {yarn: 1},
+      out: {yarn: 2},
       rect: {x: 50, w: 23, y: 52, h: 17}
     },
     "Fabric Factory": {
       in: {coal: 1, yarn: 1, dyes: 1},
-      out: {fabric: 1},
+      out: {fabric: 2},
       rect: {x: 50, w: 23, y: 28, h: 17}
     },
     "Garment": {
